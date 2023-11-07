@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/xnok/mend-renovate-ce-ee-exporter/pkg/monitor/protobuf";
+
+package monitor;
+
+service Monitor {
+  rpc GetConfig(Empty) returns (Config) {}
+  rpc GetTelemetry(Empty) returns (stream Telemetry) {}
+}
+
+message Empty {}
+
+message Config {
+  string content = 1;
+}
+
+message Telemetry {
+  double tasks_buffer_usage = 5;
+  uint64 tasks_executed_count = 6;
+  Entity metrics = 10;
+}
+
+message Entity {
+  int64 count = 1;
+  google.protobuf.Timestamp last_gc = 2;
+  google.protobuf.Timestamp last_pull = 3;
+  google.protobuf.Timestamp next_gc = 4;
+  google.protobuf.Timestamp next_pull = 5;
+}

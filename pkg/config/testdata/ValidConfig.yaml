@@ -1,0 +1,35 @@
+---
+log:
+  level: trace
+  format: json
+
+opentelemetry:
+  grpc_endpoint: otlp-collector:4317
+  service_name_key: mend-renovate-ce-ee-exporter
+
+server:
+  enable_pprof: true
+  listen_address: :1025
+
+  metrics:
+    enabled: false
+    enable_openmetrics_encoding: false
+
+  webhook:
+    enabled: true
+    secret_token: secret
+
+redis:
+  url: "redis://popopo:1337"
+
+pull:
+  metrics:
+    on_init: false
+    scheduled: false
+    interval_seconds: 4
+
+garbage_collect:
+  metrics:
+    on_init: true
+    scheduled: false
+    interval_seconds: 4
