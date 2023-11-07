@@ -44,7 +44,7 @@ func New(
 	ctx context.Context,
 	r *redis.Client,
 ) (s Store) {
-	_, span := otel.Tracer("gitlab-ci-pipelines-exporter").Start(ctx, "store:New")
+	_, span := otel.Tracer("mend-renovate-ce-ee-exporter").Start(ctx, "store:New")
 	defer span.End()
 
 	if r != nil {

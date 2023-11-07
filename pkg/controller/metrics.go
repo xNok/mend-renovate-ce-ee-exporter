@@ -17,15 +17,9 @@ type Registry struct {
 	*prometheus.Registry
 
 	InternalCollectors struct {
-		CurrentlyQueuedTasksCount  prometheus.Collector
-		EnvironmentsCount          prometheus.Collector
-		ExecutedTasksCount         prometheus.Collector
-		GitLabAPIRequestsCount     prometheus.Collector
-		GitlabAPIRequestsRemaining prometheus.Collector
-		GitlabAPIRequestsLimit     prometheus.Collector
-		MetricsCount               prometheus.Collector
-		ProjectsCount              prometheus.Collector
-		RefsCount                  prometheus.Collector
+		CurrentlyQueuedTasksCount prometheus.Collector
+		ExecutedTasksCount        prometheus.Collector
+		MetricsCount              prometheus.Collector
 	}
 
 	Collectors RegistryCollectors
@@ -53,6 +47,13 @@ func NewRegistry(ctx context.Context) *Registry {
 
 // RegisterInternalCollectors declare our internal collectors to the registry.
 func (r *Registry) RegisterInternalCollectors() {
+	r.InternalCollectors.CurrentlyQueuedTasksCount = NewInternalCollectorCurrentlyQueuedTasksCount()
+	r.InternalCollectors.ExecutedTasksCount = NewInternalCollectorExecutedTasksCount()
+	r.InternalCollectors.MetricsCount = NewInternalCollectorMetricsCount()
+
+	_ = r.Register(r.InternalCollectors.CurrentlyQueuedTasksCount)
+	_ = r.Register(r.InternalCollectors.ExecutedTasksCount)
+	_ = r.Register(r.InternalCollectors.MetricsCount)
 }
 
 // ExportInternalMetrics ..

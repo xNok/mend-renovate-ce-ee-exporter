@@ -47,7 +47,7 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 					Aliases: []string{"c"},
 					EnvVars: []string{"GCPE_CONFIG"},
 					Usage:   "config `file`",
-					Value:   "./gitlab-ci-pipelines-exporter.yml",
+					Value:   "./mend-renovate-ce-ee-exporter.yml",
 				},
 				&cli.StringFlag{
 					Name:    "redis-url",

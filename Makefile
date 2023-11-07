@@ -1,4 +1,5 @@
 NAME          := mend-renovate-ce-ee-exporter
+ORG           := xnok
 FILES         := $(shell git ls-files */*.go)
 COVERAGE_FILE := coverage.out
 REPOSITORY    := xnok/$(NAME)
@@ -19,6 +20,18 @@ test: ## Run the tests against the codebase
 	go test -v -count=1 -race ./... -coverprofile=$(COVERAGE_FILE)
 	@go tool cover -func $(COVERAGE_FILE) | awk '/^total/ {print "coverage: " $$3}'
 
+.PHONY: coverage
+coverage: ## Prints coverage report
+	go tool cover -func $(COVERAGE_FILE)
+
+.PHONY: install
+install: ## Build and install locally the binary (dev purpose)
+	go install ./cmd/$(NAME)
+
+.PHONY: build
+build: ## Build the binaries using local GOOS
+	go build ./cmd/$(NAME)
+
 .PHONY: protoc
 protoc: ## Generate golang from .proto files
 	@command -v protoc 2>&1 >/dev/null        || (echo "protoc needs to be available in PATH: https://github.com/protocolbuffers/protobuf/releases"; false)
@@ -27,3 +40,16 @@ protoc: ## Generate golang from .proto files
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		pkg/monitor/protobuf/monitor.proto
+
+.PHONY: coverage-html
+coverage-html: ## Generates coverage report and displays it in the browser
+	go tool cover -html=coverage.out
+
+.PHONY: dev-env
+dev-env: ## Build a local development environment using Docker
+	@docker run -it --rm \
+		-v $(shell pwd):/go/src/github.com/$(ORG)/$(NAME) \
+		-w /go/src/github.com/$(ORG)/$(NAME) \
+		-p 8080:8080 \
+		golang:1.20 \
+		/bin/bash -c 'make setup; make install; bash'

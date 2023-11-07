@@ -1,0 +1,41 @@
+---
+version: '3.8'
+services:
+  mend-renovate-ce-ee-exporter:
+    build: ../..
+    ports:
+      - 8080:8080
+    environment:
+      GCPE_CONFIG: /etc/mend-renovate-ce-ee-exporter.yml
+      GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://127.0.0.1:8082
+    volumes:
+      - type: bind
+        source: ./mend-renovate-ce-ee-exporter.yml
+        target: /etc/mend-renovate-ce-ee-exporter.yml
+
+  prometheus:
+    image: docker.io/prom/prometheus:v2.44.0
+    ports:
+      - 9090:9090
+    links:
+      - mend-renovate-ce-ee-exporter
+    volumes:
+      - ./prometheus/config.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: docker.io/grafana/grafana:9.5.2
+    ports:
+      - 3000:3000
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_INSTALL_PLUGINS: grafana-polystat-panel,yesoreyeram-boomtable-panel
+    links:
+      - prometheus
+    volumes:
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/default.yml
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/default.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+networks:
+  default:
+    driver: bridge

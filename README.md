@@ -14,6 +14,5 @@ go run github.com/xNok/mend-renovate-ce-ee-exporter/cmd/mend-renovate-ce-ee-expo
 
 ## Credit
 
-The structure of tis project is taken from [mvisonneau/gitlab-ci-pipelines-exporter](https://github.
-com/mvisonneau/gitlab-ci-pipelines-exporter). Looking into this project was a great opportunity to get started with 
+The structure of this project is taken from (mvisonneau/gitlab-ci-pipelines-exporter)[https://github.com/mvisonneau/gitlab-ci-pipelines-exporter]. Looking into this project was a great opportunity to get started with 
 exporter and telemetry setup in Go in general.
