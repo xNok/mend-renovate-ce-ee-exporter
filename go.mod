@@ -7,10 +7,12 @@ require (
 	github.com/charmbracelet/bubbletea v0.24.0
 	github.com/charmbracelet/lipgloss v0.7.1
 	github.com/creasty/defaults v1.7.0
+	github.com/go-faker/faker/v4 v4.2.0
 	github.com/go-logr/stdr v1.2.2
 	github.com/go-playground/validator/v10 v10.14.0
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
+	github.com/gorilla/mux v1.8.1
 	github.com/heptiolabs/healthcheck v0.0.0-20211123025425-613501dd5deb
 	github.com/mvisonneau/go-helpers v0.0.1
 	github.com/pkg/errors v0.9.1

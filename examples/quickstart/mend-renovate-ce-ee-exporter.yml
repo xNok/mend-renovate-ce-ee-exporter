@@ -1,3 +1,21 @@
 ---
 log:
   level: debug
+  format: json
+
+server:
+  listen_address: ":8080"
+  metrics:
+    enabled: true
+
+pull:
+  metrics:
+    on_init: false
+    scheduled: false
+    interval_seconds: 4
+
+garbage_collect:
+  metrics:
+    on_init: true
+    scheduled: false
+    interval_seconds: 4

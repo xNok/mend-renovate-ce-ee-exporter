@@ -1,0 +1,59 @@
+{
+    "status": {
+        "bootDate": "2023-10-16T10:29:29.580Z",
+        "jobs": {
+            "lastEnqueueDate": "2023-10-16T10:32:52.522Z",
+            "lastJob": {
+                "installationId": 123456789,
+                "params": {},
+                "priority": 17,
+                "reason": "master-issue-check",
+                "repository": "org/repo"
+            },
+            "lastJobDispatchDate": "2023-10-16T10:32:52.827Z",
+            "lastJobFinished": {
+                "finished": "2023-10-16T10:32:42.824Z",
+                "installationId": 123456789,
+                "params": {},
+                "priority": 17,
+                "reason": "master-issue-check",
+                "repository": "org/repo"
+            },
+            "queueLength": 0,
+            "totalJobsProcessed": 2
+        },
+        "jobsInProgress": [
+            {
+                "repository": "org/repo",
+                "started": "2023-10-16T10:32:52.827Z"
+            }
+        ],
+        "scheduler": {
+            "cron": "15 */2 * * *",
+            "lastScheduling": null,
+            "platform": "github"
+        },
+        "webhooks": {
+            "lastWebhookReceived": "2023-10-16T10:32:52.511Z"
+        },
+        "worker": {
+            "currentJob": {
+                "installationId": 123456789,
+                "params": {},
+                "priority": 17,
+                "reason": "master-issue-check",
+                "repository": "org/repo"
+            },
+            "currentJobStart": "2023-10-16T10:32:52.827Z",
+            "previousJob": {
+                "installationId": 123456789,
+                "params": {},
+                "priority": 17,
+                "reason": "master-issue-check",
+                "repository": "org/repo"
+            },
+            "previousJobStart": "2023-10-16T10:31:35.375Z",
+            "remediateServerEnabled": false
+        }
+    }
+}

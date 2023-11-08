@@ -55,9 +55,9 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 					Usage:   "redis `url` for an HA setup (format: redis[s]://[:password@]host[:port][/db-number][?option=value]) (overrides config file parameter)",
 				},
 				&cli.StringFlag{
-					Name:    "gitlab-token",
+					Name:    "renovate-token",
 					EnvVars: []string{"GCPE_GITLAB_TOKEN"},
-					Usage:   "GitLab API access `token` (overrides config file parameter)",
+					Usage:   "Renovate API access `token` (overrides config file parameter)",
 				},
 				&cli.StringFlag{
 					Name:    "webhook-secret-token",

@@ -333,10 +333,10 @@ func waitForTelemetryUpdate(t chan *pb.Telemetry) tea.Cmd {
 
 // Start ..
 func Start(version string, listenerAddress *url.URL) {
-	if err := tea.NewProgram(
+	if _, err := tea.NewProgram(
 		newModel(version, listenerAddress),
 		tea.WithAltScreen(),
-	).Start(); err != nil {
+	).Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}

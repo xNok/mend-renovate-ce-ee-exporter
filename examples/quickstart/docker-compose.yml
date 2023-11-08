@@ -2,21 +2,40 @@
 version: '3.8'
 services:
   mend-renovate-ce-ee-exporter:
-    build: ../..
+    build:
+      context: ../..
+      dockerfile: Dockerfile.debug
+    command: run
     ports:
-      - 8080:8080
+      - "8080:8080"
+      - "8082:8082" # monitoring client port
+      - "40000:40000" # debug port
+    # Add Permission to enable debugging
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
     environment:
-      GCPE_CONFIG: /etc/mend-renovate-ce-ee-exporter.yml
-      GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://127.0.0.1:8082
+        GCPE_CONFIG: /etc/mend-renovate-ce-ee-exporter.yml
+        GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://127.0.0.1:8082
     volumes:
       - type: bind
         source: ./mend-renovate-ce-ee-exporter.yml
         target: /etc/mend-renovate-ce-ee-exporter.yml
 
+  mend-renovate-ce-ee-exporter-monitor:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.debug
+    command: monitor
+    environment:
+      GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://mend-renovate-ce-ee-exporter-monitor:8082
+
   prometheus:
     image: docker.io/prom/prometheus:v2.44.0
     ports:
-      - 9090:9090
+      - "9090:9090"
     links:
       - mend-renovate-ce-ee-exporter
     volumes:
@@ -25,16 +44,16 @@ services:
   grafana:
     image: docker.io/grafana/grafana:9.5.2
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: 'true'
       GF_INSTALL_PLUGINS: grafana-polystat-panel,yesoreyeram-boomtable-panel
     links:
       - prometheus
     volumes:
-      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/default.yml
       - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/default.yml
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
+#      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/default.yml
+#      - ./grafana/dashboards:/var/lib/grafana/dashboards
 
 networks:
   default:

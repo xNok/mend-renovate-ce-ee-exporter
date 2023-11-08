@@ -32,6 +32,10 @@ install: ## Build and install locally the binary (dev purpose)
 build: ## Build the binaries using local GOOS
 	go build ./cmd/$(NAME)
 
+.PHONY: build-debug
+build-debug: ## Build the binaries with flags, require by delve
+	go build -gcflags "all=-N -l" ./cmd/$(NAME)
+
 .PHONY: protoc
 protoc: ## Generate golang from .proto files
 	@command -v protoc 2>&1 >/dev/null        || (echo "protoc needs to be available in PATH: https://github.com/protocolbuffers/protobuf/releases"; false)
