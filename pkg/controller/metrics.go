@@ -29,10 +29,10 @@ type Registry struct {
 type RegistryCollectors map[schemas.MetricKind]prometheus.Collector
 
 // NewRegistry initialize a new registry.
-func NewRegistry(ctx context.Context) *Registry {
+func NewRegistry(ctx context.Context, collectors RegistryCollectors) *Registry {
 	r := &Registry{
 		Registry:   prometheus.NewRegistry(),
-		Collectors: RegistryCollectors{},
+		Collectors: collectors,
 	}
 
 	r.RegisterInternalCollectors()
@@ -116,45 +116,5 @@ func (r *Registry) ExportMetrics(metrics schemas.Metrics) {
 		default:
 			log.Errorf("unsupported collector type : %v", reflect.TypeOf(c))
 		}
-	}
-}
-
-func emitStatusMetric(
-	ctx context.Context, s store.Store, metricKind schemas.MetricKind, labelValues map[string]string, statuses []string, status string,
-	sparseMetrics bool,
-) {
-	// Moved into separate function to reduce cyclomatic complexity
-	// List of available statuses from the API spec
-	// ref: https://docs.gitlab.com/ee/api/jobs.html#list-pipeline-jobs
-	for _, currentStatus := range statuses {
-		var (
-			value        float64
-			statusLabels = make(map[string]string)
-		)
-
-		for k, v := range labelValues {
-			statusLabels[k] = v
-		}
-
-		statusLabels["status"] = currentStatus
-
-		statusMetric := schemas.Metric{
-			Kind:   metricKind,
-			Labels: statusLabels,
-			Value:  value,
-		}
-
-		if currentStatus == status {
-			statusMetric.Value = 1
-		} else {
-			if sparseMetrics {
-				storeDelMetric(ctx, s, statusMetric)
-
-				continue
-			}
-			statusMetric.Value = 0
-		}
-
-		storeSetMetric(ctx, s, statusMetric)
 	}
 }

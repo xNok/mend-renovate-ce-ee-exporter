@@ -25,7 +25,7 @@ func (c *Controller) MetricsHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer span.End()
 
-	registry := NewRegistry(ctx)
+	registry := NewRegistry(ctx, c.Collectors)
 
 	metrics, err := c.Store.Metrics(ctx)
 	if err != nil {

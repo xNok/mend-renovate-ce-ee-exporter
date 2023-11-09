@@ -8,14 +8,19 @@ server:
   metrics:
     enabled: true
 
+clients:
+  mend_renovate:
+    url: "http://localhost:8010"
+    token: "renovateapi"
+
 pull:
   metrics:
-    on_init: false
-    scheduled: false
+    on_init: true
+    scheduled: true
     interval_seconds: 4
 
 garbage_collect:
   metrics:
     on_init: true
-    scheduled: false
+    scheduled: true
     interval_seconds: 4

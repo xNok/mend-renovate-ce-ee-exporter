@@ -31,7 +31,7 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 		&cli.StringFlag{
 			Name:    "internal-monitoring-listener-address",
 			Aliases: []string{"m"},
-			EnvVars: []string{"GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS"},
+			EnvVars: []string{"MRE_INTERNAL_MONITORING_LISTENER_ADDRESS"},
 			Usage:   "internal monitoring listener address",
 		},
 	}
@@ -45,23 +45,23 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 				&cli.StringFlag{
 					Name:    "config",
 					Aliases: []string{"c"},
-					EnvVars: []string{"GCPE_CONFIG"},
+					EnvVars: []string{"MRE_CONFIG"},
 					Usage:   "config `file`",
 					Value:   "./mend-renovate-ce-ee-exporter.yml",
 				},
 				&cli.StringFlag{
 					Name:    "redis-url",
-					EnvVars: []string{"GCPE_REDIS_URL"},
+					EnvVars: []string{"MRE_REDIS_URL"},
 					Usage:   "redis `url` for an HA setup (format: redis[s]://[:password@]host[:port][/db-number][?option=value]) (overrides config file parameter)",
 				},
 				&cli.StringFlag{
 					Name:    "renovate-token",
-					EnvVars: []string{"GCPE_GITLAB_TOKEN"},
+					EnvVars: []string{"MRE_GITLAB_TOKEN"},
 					Usage:   "Renovate API access `token` (overrides config file parameter)",
 				},
 				&cli.StringFlag{
 					Name:    "webhook-secret-token",
-					EnvVars: []string{"GCPE_WEBHOOK_SECRET_TOKEN"},
+					EnvVars: []string{"MRE_WEBHOOK_SECRET_TOKEN"},
 					Usage:   "`token` used to authenticate legitimate requests (overrides config file parameter)",
 				},
 			},

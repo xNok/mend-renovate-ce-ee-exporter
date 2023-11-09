@@ -11,6 +11,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"github.com/xnok/mend-renovate-ce-ee-exporter/pkg/metrics"
 
 	"github.com/xnok/mend-renovate-ce-ee-exporter/pkg/controller"
 	monitoringServer "github.com/xnok/mend-renovate-ce-ee-exporter/pkg/monitor"
@@ -30,6 +31,9 @@ func Run(cliCtx *cli.Context) (int, error) {
 	if err != nil {
 		return 1, err
 	}
+
+	// delegate the task registration to metrics Controllers
+	metrics.NewMendRenovateController(&c).Configure(ctx)
 
 	global, err := parseGlobalFlags(cliCtx)
 	if err != nil {

@@ -17,7 +17,7 @@ import (
 	"github.com/xnok/mend-renovate-ce-ee-exporter/pkg/store"
 )
 
-// TaskController holds task related clients.
+// TaskController holds task related metrics.
 type TaskController struct {
 	Factory                  taskq.Factory
 	Queue                    taskq.Queue
@@ -70,22 +70,20 @@ func NewTaskController(ctx context.Context, r *redis.Client, cfg config.Config) 
 }
 
 // Schedule ..
-func (c *Controller) Schedule(ctx context.Context, pull config.Pull, gc config.GarbageCollect) {
+func (c *Controller) Schedule(ctx context.Context, tt schemas.TaskType, cfg config.SchedulerConfig) {
 	ctx, span := otel.Tracer(c.Config.OpenTelemetry.ServiceNameKey).Start(ctx, "controller:Schedule")
 	defer span.End()
 
-	for tt, cfg := range map[schemas.TaskType]config.SchedulerConfig{} {
-		if cfg.OnInit {
-			c.ScheduleTask(ctx, tt, "_")
-		}
+	if cfg.OnInit {
+		c.ScheduleTask(ctx, tt, "_")
+	}
 
-		if cfg.Scheduled {
-			c.ScheduleTaskWithTicker(ctx, tt, cfg.IntervalSeconds)
-		}
+	if cfg.Scheduled {
+		c.ScheduleTaskWithTicker(ctx, tt, cfg.IntervalSeconds)
+	}
 
-		if c.Redis != nil {
-			c.ScheduleRedisSetKeepalive(ctx)
-		}
+	if c.Redis != nil {
+		c.ScheduleRedisSetKeepalive(ctx)
 	}
 }
 
@@ -168,7 +166,7 @@ func (c *Controller) ScheduleTaskWithTicker(ctx context.Context, tt schemas.Task
 		},
 	).Debug("task scheduled")
 
-	c.TaskController.monitorNextTaskScheduling(tt, intervalSeconds)
+	c.TaskController.MonitorNextTaskScheduling(tt, intervalSeconds)
 
 	go func(ctx context.Context) {
 		ticker := time.NewTicker(time.Duration(intervalSeconds) * time.Second)
@@ -181,7 +179,7 @@ func (c *Controller) ScheduleTaskWithTicker(ctx context.Context, tt schemas.Task
 				return
 			case <-ticker.C:
 				c.ScheduleTask(ctx, tt, "_")
-				c.TaskController.monitorNextTaskScheduling(tt, intervalSeconds)
+				c.TaskController.MonitorNextTaskScheduling(tt, intervalSeconds)
 			}
 		}
 	}(ctx)
@@ -214,7 +212,7 @@ func (c *Controller) ScheduleRedisSetKeepalive(ctx context.Context) {
 	}(ctx)
 }
 
-func (tc *TaskController) monitorNextTaskScheduling(tt schemas.TaskType, duration int) {
+func (tc *TaskController) MonitorNextTaskScheduling(tt schemas.TaskType, duration int) {
 	if _, ok := tc.TaskSchedulingMonitoring[tt]; !ok {
 		tc.TaskSchedulingMonitoring[tt] = &schemas.TaskSchedulingStatus{}
 	}
@@ -222,7 +220,7 @@ func (tc *TaskController) monitorNextTaskScheduling(tt schemas.TaskType, duratio
 	tc.TaskSchedulingMonitoring[tt].Next = time.Now().Add(time.Duration(duration) * time.Second)
 }
 
-func (tc *TaskController) monitorLastTaskScheduling(tt schemas.TaskType) {
+func (tc *TaskController) MonitorLastTaskScheduling(tt schemas.TaskType) {
 	if _, ok := tc.TaskSchedulingMonitoring[tt]; !ok {
 		tc.TaskSchedulingMonitoring[tt] = &schemas.TaskSchedulingStatus{}
 	}

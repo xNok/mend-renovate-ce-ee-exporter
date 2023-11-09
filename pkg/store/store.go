@@ -28,7 +28,9 @@ type Store interface {
 
 // NewLocalStore ..
 func NewLocalStore() Store {
-	return &Local{}
+	return &Local{
+		metrics: make(schemas.Metrics),
+	}
 }
 
 // NewRedisStore ..

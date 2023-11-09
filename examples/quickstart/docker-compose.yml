@@ -17,8 +17,8 @@ services:
     cap_add:
       - SYS_PTRACE
     environment:
-        GCPE_CONFIG: /etc/mend-renovate-ce-ee-exporter.yml
-        GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://127.0.0.1:8082
+        MRE_CONFIG: /etc/mend-renovate-ce-ee-exporter.yml
+        MRE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://127.0.0.1:8082
     volumes:
       - type: bind
         source: ./mend-renovate-ce-ee-exporter.yml
@@ -30,7 +30,7 @@ services:
       dockerfile: Dockerfile.debug
     command: monitor
     environment:
-      GCPE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://mend-renovate-ce-ee-exporter-monitor:8082
+      MRE_INTERNAL_MONITORING_LISTENER_ADDRESS: tcp://mend-renovate-ce-ee-exporter-monitor:8082
 
   prometheus:
     image: docker.io/prom/prometheus:v2.44.0

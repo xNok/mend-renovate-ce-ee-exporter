@@ -7,6 +7,13 @@ import (
 // TaskType represents the type of a task.
 type TaskType string
 
+const (
+	// TaskTypePullMetrics ..
+	TaskTypePullMetrics TaskType = "PullMetrics"
+	// TaskTypeGarbageCollectMetrics ..
+	TaskTypeGarbageCollectMetrics TaskType = "GarbageCollectMetrics"
+)
+
 // Tasks can be used to keep track of tasks.
 type Tasks map[TaskType]map[string]interface{}
 

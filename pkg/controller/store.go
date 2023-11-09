@@ -16,7 +16,7 @@ func metricLogFields(m schemas.Metric) log.Fields {
 	}
 }
 
-func storeGetMetric(ctx context.Context, s store.Store, m *schemas.Metric) {
+func StoreGetMetric(ctx context.Context, s store.Store, m *schemas.Metric) {
 	if err := s.GetMetric(ctx, m); err != nil {
 		log.WithContext(ctx).
 			WithFields(metricLogFields(*m)).
@@ -25,7 +25,7 @@ func storeGetMetric(ctx context.Context, s store.Store, m *schemas.Metric) {
 	}
 }
 
-func storeSetMetric(ctx context.Context, s store.Store, m schemas.Metric) {
+func StoreSetMetric(ctx context.Context, s store.Store, m schemas.Metric) {
 	if err := s.SetMetric(ctx, m); err != nil {
 		log.WithContext(ctx).
 			WithFields(metricLogFields(m)).
@@ -34,7 +34,7 @@ func storeSetMetric(ctx context.Context, s store.Store, m schemas.Metric) {
 	}
 }
 
-func storeDelMetric(ctx context.Context, s store.Store, m schemas.Metric) {
+func StoreDelMetric(ctx context.Context, s store.Store, m schemas.Metric) {
 	if err := s.DelMetric(ctx, m.Key()); err != nil {
 		log.WithContext(ctx).
 			WithFields(metricLogFields(m)).

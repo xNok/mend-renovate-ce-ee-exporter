@@ -31,12 +31,15 @@ type Controller struct {
 	Redis          *redis.Client
 	TaskController TaskController
 	Store          store.Store
+
+	Collectors RegistryCollectors
 }
 
 // New creates a new controller.
 func New(ctx context.Context, cfg config.Config, version string) (c Controller, err error) {
 	c.Config = cfg
 	c.UUID = uuid.New()
+	c.Collectors = make(RegistryCollectors)
 
 	if err = configureTracing(ctx, &cfg.OpenTelemetry); err != nil {
 		return
@@ -47,16 +50,7 @@ func New(ctx context.Context, cfg config.Config, version string) (c Controller, 
 	}
 
 	c.TaskController = NewTaskController(ctx, c.Redis, cfg)
-	c.registerTasks()
-
 	c.Store = store.New(ctx, c.Redis)
-
-	if err = c.configureClients(ctx, version); err != nil {
-		return
-	}
-
-	// Start the scheduler
-	c.Schedule(ctx, cfg.Pull, cfg.GarbageCollect)
 
 	return
 }
@@ -146,22 +140,37 @@ func (c *Controller) configureRedis(ctx context.Context, url string) (err error)
 	return
 }
 
-// registerTasks is used to load the list of tasks to be handled.
-func (c *Controller) registerTasks() {
-	for n, h := range map[schemas.TaskType]interface{}{
-		// TODO add the tasks here
-	} {
-		_, _ = c.TaskController.TaskMap.Register(
-			string(n), &taskq.TaskConfig{
-				Handler:    h,
-				RetryLimit: 1,
-			},
-		)
+// RegisterTasks is used to load the list of tasks to be handled.
+func (c *Controller) RegisterTasks(n schemas.TaskType, h interface{}) {
+	_, _ = c.TaskController.TaskMap.Register(
+		string(n), &taskq.TaskConfig{
+			Handler:    h,
+			RetryLimit: 1,
+		},
+	)
+}
+
+// RegisterCollector is used to add collectors to the registry
+func (c *Controller) RegisterCollector(ctx context.Context, collectors RegistryCollectors) {
+	for kind, collector := range collectors {
+		if _, ok := c.Collectors[kind]; ok {
+			log.WithContext(ctx).Warn("Duplicated Collector key - skipping")
+		}
+
+		c.Collectors[kind] = collector
 	}
 }
 
-// configureClients set up the API clients or sdk used to fetch the data.
-func (c *Controller) configureClients(ctx context.Context, version string) error {
-	// TODO
-	return nil
+func (c *Controller) UnqueueTask(ctx context.Context, tt schemas.TaskType, uniqueID string) {
+	if err := c.Store.UnqueueTask(ctx, tt, uniqueID); err != nil {
+		log.WithContext(ctx).
+			WithFields(
+				log.Fields{
+					"task_type":      tt,
+					"task_unique_id": uniqueID,
+				},
+			).
+			WithError(err).
+			Warn("unqueuing task")
+	}
 }

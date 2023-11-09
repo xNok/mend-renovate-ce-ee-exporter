@@ -32,6 +32,9 @@ type Config struct {
 
 	// GarbageCollect configuration
 	GarbageCollect GarbageCollect `yaml:"garbage_collect"`
+
+	// Clients configuration for the API client use to scrape
+	Clients Clients `yaml:"clients"`
 }
 
 // Validate will throw an error if the Config parameters are whether incomplete or incorrect.
@@ -163,4 +166,14 @@ func (c Config) ToYAML() string {
 	}
 
 	return string(b)
+}
+
+type Clients struct {
+	// MendRenovate configuration to talk to the server
+	MendRenovate MendRenovate `yaml:"mend_renovate"`
+}
+
+type MendRenovate struct {
+	URL   string `yaml:"url"`
+	Token string `yaml:"token"`
 }
