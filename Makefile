@@ -57,3 +57,18 @@ dev-env: ## Build a local development environment using Docker
 		-p 8080:8080 \
 		golang:1.20 \
 		/bin/bash -c 'make setup; make install; bash'
+
+
+.PHONY: release
+release: ## Build & release the binaries (stable)
+	git tag -d edge
+	goreleaser release --clean
+	find dist -type f -name "*.snap" -exec snapcraft upload --release stable,edge '{}' \;
+
+.PHONY: prerelease
+prerelease: ## Build & prerelease the binaries (edge)
+	@\
+		REPOSITORY=$(REPOSITORY) \
+		NAME=$(NAME) \
+		GITHUB_TOKEN=$(GITHUB_TOKEN) \
+		.github/prerelease.sh
